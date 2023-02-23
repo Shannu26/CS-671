@@ -28,27 +28,18 @@ def getAlphabetFromFile(filename):
 	return alphabet
 
 def main():
-	filename = input("Enter the filename of alphabet file: ")
-	alphabet = getAlphabetFromFile(filename)
+	alphabet = getAlphabetFromFile("input.txt")
 	a = int(input("Enter the value of 'a': "))
 	b = int(input("Enter the value of 'b': "))
 	if math.gcd(a, 26) != 1: 
-		print("'a' should be a coprime of 26")
+		print("'a' should be a coprime of length of alphabet which is " + str(len(alphabet)))
 		return
-	print("Which operation would you like to perform?")
-	operation = int(input("Enter 1 to Encrypt and 2 to Decrypt a text: "))
-	if operation == 1:
-		plainText = input("Enter the text you want to encrypt: ") 
-		plainText = plainText.lower()
-		cipherText = encrypt(alphabet, plainText, a, b)
-		print("The Plain Text is: " + plainText)
-		print("The Encrypted Text is: " + cipherText)
-	else:
-		cipherText = input("Enter the text you want to decrypt: ")
-		cipherText = cipherText.lower()
-		plainText = decrypt(alphabet, cipherText, a, b)
-		print("The Cipher Text is: " + cipherText)
-		print("The Decrypted Text is: " + plainText)
+	inputText = input("Enter the text you want to encrypt: ")
+	inputText = inputText.lower()
+	cipherText = encrypt(alphabet, inputText, a, b)
+	print("Encrypted Text: " + cipherText)
+	plainText = decrypt(alphabet, cipherText, a, b)
+	print("Decrypted Text: " + plainText)
 
 if __name__ == "__main__":
 	main()
