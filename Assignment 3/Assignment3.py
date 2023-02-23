@@ -3,7 +3,7 @@ import math
 def encrypt(alphabet, plainText, a, b):
 	cipherText = ""
 	for letter in plainText:
-		if letter == " ": cipherText += " "
+		if letter not in alphabet: cipherText += letter
 		else: 
 			letterIndex = alphabet.index(letter)
 			cipherIndex = (a * letterIndex + b) % len(alphabet)
@@ -14,7 +14,7 @@ def decrypt(alphabet, cipherText, a, b):
 	a_inverse = pow(a, -1, 26)
 	plainText = ""
 	for letter in cipherText:
-		if letter == " ": plainText += " "
+		if letter not in alphabet: plainText += letter
 		else: 
 			letterIndex = alphabet.index(letter)
 			plainIndex = a_inverse * (letterIndex - b) % len(alphabet)
