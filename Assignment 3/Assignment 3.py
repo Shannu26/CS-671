@@ -11,7 +11,7 @@ def encrypt(alphabet, plainText, a, b):
 	return cipherText
 
 def decrypt(alphabet, cipherText, a, b):
-	a_inverse = pow(a, -1, 26)
+	a_inverse = pow(a, -1, len(alphabet))
 	plainText = ""
 	for letter in cipherText:
 		if letter not in alphabet: plainText += letter
@@ -28,7 +28,7 @@ def getAlphabetFromFile(filename):
 	return alphabet
 
 def main():
-	alphabet = getAlphabetFromFile("alphabet.txt")
+	alphabet = getAlphabetFromFile("alphabetInput.txt")
 	a = int(input("Enter the value of 'a': "))
 	b = int(input("Enter the value of 'b': "))
 	if math.gcd(a, len(alphabet)) != 1: 
