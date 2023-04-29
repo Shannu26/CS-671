@@ -36,6 +36,25 @@ integer_to_binary_mapping = {
 								15: "1111"
 							}
 
+binary_to_hex_mapping = {
+							"0000": "0",
+							"0001": "1",
+							"0010": "2",
+							"0011": "3",
+							"0100": "4",
+							"0101": "5",
+							"0110": "6",
+							"0111": "7",
+							"1000": "8",
+							"1001": "9",
+							"1010": "A",
+							"1011": "B",
+							"1100": "C",
+							"1101": "D",
+							"1110": "E",
+							"1111": "F"
+						}
+
 first_permutation_order = 	[57, 49, 41, 33, 25, 17, 9,
 							 1, 58, 50, 42, 34, 26, 18,
 							 10, 2, 59, 51, 43, 35, 27,
@@ -62,6 +81,15 @@ initial_permutation = 	[58, 50, 42, 34, 26, 18, 10, 2,
 						 59, 51, 43, 35, 27, 19, 11, 3,
 						 61, 53, 45, 37, 29, 21, 13, 5,
 						 63, 55, 47, 39, 31, 23, 15, 7]
+
+inverse_initial_permutation = 	[40, 8, 48, 16, 56, 24, 64, 32,               
+								 39, 7, 47, 15, 55, 23, 63, 31,               
+								 38, 6, 46, 14, 54, 22, 62, 30,               
+								 37, 5, 45, 13, 53, 21, 61, 29,               
+								 36, 4, 44, 12, 52, 20, 60, 28,               
+								 35, 3, 43, 11, 51, 19, 59, 27,               
+								 34, 2, 42, 10, 50, 18, 58, 26,               
+								 33, 1, 41, 9, 49, 17, 57, 25]
 
 expansion_order = 	[32, 1, 2, 3, 4, 5, 4, 5,          
 					 6, 7, 8, 9, 8, 9, 10, 11,          
@@ -103,6 +131,15 @@ all_s_boxes = 	[[[14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
 				  [7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],          
 				  [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]]]
 
+right_permutation_order = 	[16,  7, 20, 21,        
+							 29, 12, 28, 17,        
+							 1, 15, 23, 26,        
+							 5, 18, 31, 10,        
+							 2,  8, 24, 14,        
+							 32, 27,  3,  9,        
+							 19, 13, 30,  6,        
+							 22, 11,  4, 25]
+
 number_of_shifts = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 
 all_subkeys = []
@@ -112,6 +149,12 @@ def convert_hex_to_binary(hex_string):
 	for hex_char in hex_string:
 		binary_string += hex_to_binary_mapping[hex_char]
 	return binary_string
+
+def convert_binary_to_hex(binary_string):
+	hex_string = ""
+	for index in range(0, len(binary_string), 4):
+		hex_string += binary_to_hex_mapping[binary_string[index: index + 4]]
+	return hex_string
 
 def get_key_after_first_perumtation_order(key):
 	key_after_first_perumtation_order = ""
@@ -161,49 +204,59 @@ def get_result_after_xor(first, second):
 	return result_after_xor 
 
 def get_right_after_compression(right):
-	all_splits = []
-	split = ""
-	for index in range(len(right)):
-		if index % 6 == 0 and index != 0:
-			all_splits.append(split)
-			split = ""
-		else: split += right[index]
-	all_splits.append(split)
-
 	right_after_compression = ""
-	for index in range(len(all_splits)):
-		row = int(all_splits[index][0] + all_splits[index][-1], 2)
-		col = int(all_splits[index][1:-1], 2)
-		right_after_compression += integer_to_binary_mapping[all_s_boxes[index][row][col]]
+	for index in range(0, len(right), 6):
+		row = int(right[index] + right[index + 5], 2)
+		col = int(right[index + 1: index + 5], 2)
+		right_after_compression += integer_to_binary_mapping[all_s_boxes[index % 6][row][col]]
 	return right_after_compression
+
+def get_right_after_permutation(right):
+	right_after_permutation = ""
+	for index in range(len(right_permutation_order)):
+		right_after_permutation += right[right_permutation_order[index] - 1]
+	return right_after_permutation
+
+def get_text_after_inverse_initial_permutation(string):
+	text_after_inverse_initial_permutation = ""
+	for index in range(len(inverse_initial_permutation)):
+		text_after_inverse_initial_permutation += string[inverse_initial_permutation[index] - 1]
+	return text_after_inverse_initial_permutation
 
 def implement_des_algorithm():
 	plain_text = input("Enter the plain text: ")
 	key = input("Enter the key: ")
-	print(plain_text)
-	print(key)
+	# print(plain_text)
+	# print(key)
 	plain_text_binary = convert_hex_to_binary(plain_text)
 	key_binary = convert_hex_to_binary(key)
-	print(plain_text_binary)
-	print(key_binary)
+	# print(plain_text_binary)
+	# print(key_binary)
 	generate_all_subkeys(key_binary)
-	print(all_subkeys)
+	# print(all_subkeys)
 	plain_text_after_initial_permutation = get_plain_text_after_initial_permutation(plain_text_binary)
-	print(plain_text_after_initial_permutation)
+	# print(plain_text_after_initial_permutation)
 	left = plain_text_after_initial_permutation[:len(plain_text_after_initial_permutation) // 2]
 	right = plain_text_after_initial_permutation[len(plain_text_after_initial_permutation) // 2:]
-	print(left)
-	print(right)
+	# print(left)
+	# print(right)
 
 	for round_index in range(16):
 		right_after_expansion = get_right_after_expansion(right)
 		right_after_xor = get_result_after_xor(right_after_expansion, all_subkeys[round_index])
 		right_after_compression = get_right_after_compression(right_after_xor)
-		right_after_xor = get_result_after_xor(left, right_after_compression)
+		right_after_permutation = get_right_after_permutation(right_after_xor)
+		right_after_xor = get_result_after_xor(left, right_after_permutation)
 		
 		left = right
 		right = right_after_xor
 		print(left, right)
+	left, right = right, left
+	cipher_text = left + right
+	cipher_text = get_text_after_inverse_initial_permutation(cipher_text)
+	cipher_text = convert_binary_to_hex(cipher_text)
+	print(cipher_text)
 
 if __name__ == "__main__":
+	
 	implement_des_algorithm()
