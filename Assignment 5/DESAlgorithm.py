@@ -184,11 +184,11 @@ def generate_all_subkeys(key):
 		key_left = key_left_after_shifts
 		key_right = key_right_after_shifts
 
-def get_plain_text_after_initial_permutation(plain_text):
-	plain_text_after_initial_permutation = ""
+def get_text_after_initial_permutation(text):
+	text_after_initial_permutation = ""
 	for index in range(len(initial_permutation)):
-		plain_text_after_initial_permutation += plain_text[initial_permutation[index] - 1]
-	return plain_text_after_initial_permutation
+		text_after_initial_permutation += text[initial_permutation[index] - 1]
+	return text_after_initial_permutation
 
 def get_right_after_expansion(right):
 	right_after_expansion = ""
@@ -205,10 +205,10 @@ def get_result_after_xor(first, second):
 
 def get_right_after_compression(right):
 	right_after_compression = ""
-	for index in range(0, len(right), 6):
-		row = int(right[index] + right[index + 5], 2)
-		col = int(right[index + 1: index + 5], 2)
-		right_after_compression += integer_to_binary_mapping[all_s_boxes[index % 6][row][col]]
+	for index in range(8):
+		row = int(right[index * 6] + right[index * 6 + 5], 2)
+		col = int(right[index * 6 + 1: index * 6 + 5], 2)
+		right_after_compression += integer_to_binary_mapping[all_s_boxes[index][row][col]]
 	return right_after_compression
 
 def get_right_after_permutation(right):
@@ -223,40 +223,76 @@ def get_text_after_inverse_initial_permutation(string):
 		text_after_inverse_initial_permutation += string[inverse_initial_permutation[index] - 1]
 	return text_after_inverse_initial_permutation
 
-def implement_des_algorithm():
-	plain_text = input("Enter the plain text: ")
-	key = input("Enter the key: ")
-	# print(plain_text)
-	# print(key)
-	plain_text_binary = convert_hex_to_binary(plain_text)
-	key_binary = convert_hex_to_binary(key)
-	# print(plain_text_binary)
-	# print(key_binary)
-	generate_all_subkeys(key_binary)
-	# print(all_subkeys)
-	plain_text_after_initial_permutation = get_plain_text_after_initial_permutation(plain_text_binary)
-	# print(plain_text_after_initial_permutation)
-	left = plain_text_after_initial_permutation[:len(plain_text_after_initial_permutation) // 2]
-	right = plain_text_after_initial_permutation[len(plain_text_after_initial_permutation) // 2:]
-	# print(left)
-	# print(right)
+def implement_des_algorithm(text):
+	text_after_initial_permutation = get_text_after_initial_permutation(text)
+	left = text_after_initial_permutation[:len(text_after_initial_permutation) // 2]
+	right = text_after_initial_permutation[len(text_after_initial_permutation) // 2:]
 
 	for round_index in range(16):
 		right_after_expansion = get_right_after_expansion(right)
 		right_after_xor = get_result_after_xor(right_after_expansion, all_subkeys[round_index])
 		right_after_compression = get_right_after_compression(right_after_xor)
-		right_after_permutation = get_right_after_permutation(right_after_xor)
+		right_after_permutation = get_right_after_permutation(right_after_compression)
 		right_after_xor = get_result_after_xor(left, right_after_permutation)
 		
 		left = right
 		right = right_after_xor
-		print(left, right)
 	left, right = right, left
 	cipher_text = left + right
 	cipher_text = get_text_after_inverse_initial_permutation(cipher_text)
-	cipher_text = convert_binary_to_hex(cipher_text)
-	print(cipher_text)
+	return cipher_text
 
 if __name__ == "__main__":
-	
-	implement_des_algorithm()
+	print("Which Operation would you like to perform?")
+	print("Enter 1 to Encrypt")
+	print("Enter 2 to Decrypt")
+	print("Enter 3 to do Both")
+	option = int(input("Enter your option:"))
+
+	if option == 1:
+		plain_text = input("Enter the text you want to encrypt: ")
+		key = input("Enter the key you want to use: ")
+		plain_text_binary = convert_hex_to_binary(plain_text)
+		key_binary = convert_hex_to_binary(key)
+		generate_all_subkeys(key_binary)
+		cipher_text = implement_des_algorithm(plain_text_binary)
+		cipher_text_hex = convert_binary_to_hex(cipher_text)
+		print("Given,")
+		print("\tPlain Text: ", plain_text)
+		print("\tKey: ", key)
+		print("The Cipher Text after performing Encryption: ", cipher_text_hex)
+
+	if option == 2:
+		cipher_text = input("Enter the text you want to decrypt: ")
+		key = input("Enter the key you want to use: ")
+		cipher_text_binary = convert_hex_to_binary(cipher_text)
+		key_binary = convert_hex_to_binary(key)
+		generate_all_subkeys(key_binary)
+		all_subkeys = all_subkeys[::-1]
+		plain_text = implement_des_algorithm(cipher_text_binary)
+		plain_text_hex = convert_binary_to_hex(plain_text)
+		print("Given,")
+		print("\tCipher Text: ", cipher_text)
+		print("\tKey: ", key)
+		print("The Plain Text after performing Decryption: ", plain_text_hex)
+
+	if option == 3:
+		plain_text = input("Enter the text: ")
+		key = input("Enter the key you want to use: ")
+		plain_text_binary = convert_hex_to_binary(plain_text)
+		key_binary = convert_hex_to_binary(key)
+		generate_all_subkeys(key_binary)
+		cipher_text = implement_des_algorithm(plain_text_binary)
+		cipher_text_hex = convert_binary_to_hex(cipher_text)
+		print("Given,")
+		print("\tPlain Text: ", plain_text)
+		print("\tKey: ", key)
+		print("The Cipher Text after performing Encryption: ", cipher_text_hex)
+		all_subkeys = all_subkeys[::-1]
+		plain_text = implement_des_algorithm(cipher_text)
+		plain_text_hex = convert_binary_to_hex(plain_text)
+		print()
+		print("Now,")
+		print("\tCipher Text: ", cipher_text_hex)
+		print("\tKey: ", key)
+		print("The Plain Text after performing Decryption: ", plain_text_hex)
