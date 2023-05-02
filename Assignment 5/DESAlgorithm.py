@@ -242,6 +242,56 @@ def implement_des_algorithm(text):
 	cipher_text = get_text_after_inverse_initial_permutation(cipher_text)
 	return cipher_text
 
+def perform_encryption():
+	plain_text = input("Enter the text you want to encrypt: ")
+	key = input("Enter the key you want to use: ")
+	plain_text_binary = convert_hex_to_binary(plain_text)
+	key_binary = convert_hex_to_binary(key)
+	generate_all_subkeys(key_binary)
+	cipher_text = implement_des_algorithm(plain_text_binary)
+	cipher_text_hex = convert_binary_to_hex(cipher_text)
+	print("Given,")
+	print("\tPlain Text: ", plain_text)
+	print("\tKey: ", key)
+	print("The Cipher Text after performing Encryption: ", cipher_text_hex)
+
+def perform_decryption():
+	global all_subkeys
+	cipher_text = input("Enter the text you want to decrypt: ")
+	key = input("Enter the key you want to use: ")
+	cipher_text_binary = convert_hex_to_binary(cipher_text)
+	key_binary = convert_hex_to_binary(key)
+	generate_all_subkeys(key_binary)
+	all_subkeys = all_subkeys[::-1]
+	plain_text = implement_des_algorithm(cipher_text_binary)
+	plain_text_hex = convert_binary_to_hex(plain_text)
+	print("Given,")
+	print("\tCipher Text: ", cipher_text)
+	print("\tKey: ", key)
+	print("The Plain Text after performing Decryption: ", plain_text_hex)
+
+def perform_both_encryption_and_decryption():
+	global all_subkeys
+	plain_text = input("Enter the text: ")
+	key = input("Enter the key you want to use: ")
+	plain_text_binary = convert_hex_to_binary(plain_text)
+	key_binary = convert_hex_to_binary(key)
+	generate_all_subkeys(key_binary)
+	cipher_text = implement_des_algorithm(plain_text_binary)
+	cipher_text_hex = convert_binary_to_hex(cipher_text)
+	print("Given,")
+	print("\tPlain Text: ", plain_text)
+	print("\tKey: ", key)
+	print("The Cipher Text after performing Encryption: ", cipher_text_hex)
+	all_subkeys = all_subkeys[::-1]
+	plain_text = implement_des_algorithm(cipher_text)
+	plain_text_hex = convert_binary_to_hex(plain_text)
+	print()
+	print("Now,")
+	print("\tCipher Text: ", cipher_text_hex)
+	print("\tKey: ", key)
+	print("The Plain Text after performing Decryption: ", plain_text_hex)
+
 if __name__ == "__main__":
 	print("Which Operation would you like to perform?")
 	print("Enter 1 to Encrypt")
@@ -250,49 +300,11 @@ if __name__ == "__main__":
 	option = int(input("Enter your option:"))
 
 	if option == 1:
-		plain_text = input("Enter the text you want to encrypt: ")
-		key = input("Enter the key you want to use: ")
-		plain_text_binary = convert_hex_to_binary(plain_text)
-		key_binary = convert_hex_to_binary(key)
-		generate_all_subkeys(key_binary)
-		cipher_text = implement_des_algorithm(plain_text_binary)
-		cipher_text_hex = convert_binary_to_hex(cipher_text)
-		print("Given,")
-		print("\tPlain Text: ", plain_text)
-		print("\tKey: ", key)
-		print("The Cipher Text after performing Encryption: ", cipher_text_hex)
+		perform_encryption()
 
 	if option == 2:
-		cipher_text = input("Enter the text you want to decrypt: ")
-		key = input("Enter the key you want to use: ")
-		cipher_text_binary = convert_hex_to_binary(cipher_text)
-		key_binary = convert_hex_to_binary(key)
-		generate_all_subkeys(key_binary)
-		all_subkeys = all_subkeys[::-1]
-		plain_text = implement_des_algorithm(cipher_text_binary)
-		plain_text_hex = convert_binary_to_hex(plain_text)
-		print("Given,")
-		print("\tCipher Text: ", cipher_text)
-		print("\tKey: ", key)
-		print("The Plain Text after performing Decryption: ", plain_text_hex)
+		perform_decryption()
 
 	if option == 3:
-		plain_text = input("Enter the text: ")
-		key = input("Enter the key you want to use: ")
-		plain_text_binary = convert_hex_to_binary(plain_text)
-		key_binary = convert_hex_to_binary(key)
-		generate_all_subkeys(key_binary)
-		cipher_text = implement_des_algorithm(plain_text_binary)
-		cipher_text_hex = convert_binary_to_hex(cipher_text)
-		print("Given,")
-		print("\tPlain Text: ", plain_text)
-		print("\tKey: ", key)
-		print("The Cipher Text after performing Encryption: ", cipher_text_hex)
-		all_subkeys = all_subkeys[::-1]
-		plain_text = implement_des_algorithm(cipher_text)
-		plain_text_hex = convert_binary_to_hex(plain_text)
-		print()
-		print("Now,")
-		print("\tCipher Text: ", cipher_text_hex)
-		print("\tKey: ", key)
-		print("The Plain Text after performing Decryption: ", plain_text_hex)
+		perform_both_encryption_and_decryption()
+
